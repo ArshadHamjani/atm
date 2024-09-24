@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GA ATM</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <section class="sign">
+            <h1>Bank ATM</h1>
+            <div class="cam"></div>
+        </section>
+        <section class="account-info">
+            <h3>Account Information</h3>
+            <p><strong>Username:</strong> <span class="username"></span></p>
+            <p><strong>Account Number:</strong> <span class="account-number"></span></p>
+        </section>
+        
+        <section class="atm-top"></section>
+        <section class="screen">
+            <h3>Your balance is</h3>
+            <span class="balance"></span>
+            <p class="alerts">
+                <span class="warning"></span>
+                <span class="attempts"></span>
+            </p>
+        </section>
+        <section class="atm-bottom">
+            <div class="user-buttons" id="form">
+                <div class="l-btn">
+                    <button class="withdraw-btn">withdraw</button>
+                   <button class="saving-btn">saving  </button> 
+                </div>
+                <input type="text" class="input-amount" placeholder="$00.00">
+                <div class="r-btn">
+                    <button class="deposit-btn">deposit</button>
+                    <button class="current-btn">current </button>
+                </div>
+            </div>
+        </section>
+    </div>
+    <section class="atm-base">
+        <div>receipts</div>
+        <div></div>
+    </section>
+    <!-- js start -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const withdrawBtn = document.querySelector('.withdraw-btn');
+        const depositBtn = document.querySelector('.deposit-btn');
+        const savingBtn = document.querySelector('.saving-btn');
+        const currentBtn = document.querySelector('.current-btn');
+        const inputAmount = document.querySelector('.input-amount');
+        const balanceDisplay = document.querySelector('.balance');
+        const warningDisplay = document.querySelector('.warning');
+        const usernameDisplay = document.querySelector('.username');
+        const accountNumberDisplay = document.querySelector('.account-number');
+        let balance = 0;
+        let savingBalance = 0;
+        let currentBalance = 0;
+        let userName = '';
+        let accountNumber = '';
+
+        function promptUserDetails() {
+            if (!userName) {
+                userName = prompt('Please enter your name:');
+                usernameDisplay.textContent = userName;
+            }
+            if (!accountNumber) {
+                accountNumber = prompt('Please enter your account number:');
+                accountNumberDisplay.textContent = accountNumber;
+            }
+        }
+
+        function updateBalanceDisplay(amount) {
+            balanceDisplay.textContent = `$${amount.toFixed(2)}`;
+        }
+
+        function atmAction(action) {
+            promptUserDetails();
+            let amount = parseFloat(inputAmount.value);
+            if (isNaN(amount) && action !== 'saving' && action !== 'current') {
+                alert('Please enter a valid amount.');
+                return;
+            }
+
+            switch(action) {
+                case 'withdraw':
+                    if (balance >= amount) {
+                        balance -= amount;
+                        alert(`You have withdrawn $${amount.toFixed(2)}`);
+                    } else {
+                        alert('Insufficient balance.');
+                    }
+                    break;
+                case 'deposit':
+                    balance += amount;
+                    alert(`You have deposited $${amount.toFixed(2)}`);
+                    break;
+                case 'saving':
+                    savingBalance = balance;
+                    let profit = savingBalance * 0.012;
+                    let totalWithProfit = savingBalance + profit;
+                    warningDisplay.textContent = `Your savings balance is $${savingBalance.toFixed(2)} with a 1.2% profit: $${profit.toFixed(2)}. Total with profit: $${totalWithProfit.toFixed(2)}`;
+                    break;
+                case 'current':
+                    currentBalance = balance;
+                    warningDisplay.textContent = `Current Balance: $${currentBalance.toFixed(2)}`;
+                    break;
+                default:
+                    alert('Invalid action.');
+            }
+
+            updateBalanceDisplay(balance);
+        }
+
+        withdrawBtn.addEventListener('click', function() {
+            atmAction('withdraw');
+        });
+
+        depositBtn.addEventListener('click', function() {
+            atmAction('deposit');
+        });
+
+        savingBtn.addEventListener('click', function() {
+            atmAction('saving');
+        });
+
+        currentBtn.addEventListener('click', function() {
+            atmAction('current');
+        });
+
+        updateBalanceDisplay(balance);
+    });
+
+</script>
+</body>
+
+</html>
